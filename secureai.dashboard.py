@@ -35,6 +35,22 @@ st.sidebar.title("Filters")
 selected_severity = st.sidebar.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
 selected_category = st.sidebar.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
 
+# Incident Reporting Form
+st.sidebar.title("Incident Reporting")
+with st.sidebar.form("incident_form"):
+    form_date = st.date_input("Date")
+    form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+    form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'])
+    form_description = st.text_area("Description")
+    form_status = st.selectbox("Status", ['Open', 'In Progress', 'Resolved'])
+    submit_button = st.form_submit_button("Report Incident")
+
+    # Add new incident to the DataFrame
+    if submit_button:
+        new_incident = pd.DataFrame([[form_date, form_category, form_severity, form_description, form_status]],
+                                    columns=['Date', 'Category', 'Severity', 'Description', 'Status'])
+        incident_reports = pd.concat([incident_reports, new_incident], ignore_index=True)
+
 # Load and filter data
 data = generate_sample_data()
 if selected_severity:
@@ -63,6 +79,10 @@ st.download_button(
     file_name='threat_data.csv',
     mime='text/csv',
 )
+
+# Display Incident Reports (optional)
+st.write("Incident Reports")
+st.dataframe(incident_reports)
 
 # Footer
 st.write("SecureAI Threat Intelligence Dashboard")
