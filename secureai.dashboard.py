@@ -17,28 +17,9 @@ def generate_sample_data():
     })
     return data
 
-# Sample data generation for incident reports
-def generate_incident_reports():
-    report_ids = np.arange(1, 11)
-    categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
-    severity_levels = ['High', 'Medium', 'Low']
-    descriptions = [
-        'Malware detected on server.', 'Phishing email reported by user.',
-        'DDoS attack on the main website.', 'Suspicious activity in the database.',
-        # ... other descriptions ...
-    ]
-
-    incident_data = {
-        'Report ID': report_ids,
-        'Category': np.random.choice(categories, size=10),
-        'Severity': np.random.choice(severity_levels, size=10),
-        'Description': np.random.choice(descriptions, size=10)
-    }
-
-    return pd.DataFrame(incident_data)
-
-# Generate the incident reports DataFrame
-incident_reports = generate_incident_reports()
+# In-memory storage for incident reports
+if 'incident_reports' not in st.session_state:
+    st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
 
 # Authentication (placeholder, implement real authentication for production)
 def authenticate_user(username, password):
@@ -57,6 +38,21 @@ st.title('Threat Intelligence Dashboard')
 st.sidebar.title("Filters")
 selected_severity = st.sidebar.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
 selected_category = st.sidebar.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+
+# Incident Reporting Form
+st.sidebar.title("Incident Reporting")
+with st.sidebar.form("incident_form"):
+    form_date = st.date_input("Date")
+    form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+    form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'])
+    form_description = st.text_area("Description")
+    submit_button = st.form_submit_button("Report Incident")
+
+    # Add new incident to the DataFrame
+    if submit_button:
+        new_incident = pd.DataFrame([[form_date, form_category, form_severity, form_description]],
+                                    columns=['Date', 'Category', 'Severity', 'Description'])
+        st.session_state['incident_reports'] = pd.concat([st.session_state['incident_reports'], new_incident], ignore_index=True)
 
 # Load and filter data
 data = generate_sample_data()
@@ -89,7 +85,8 @@ st.download_button(
 
 # Display Incident Reports
 st.write("Incident Reports")
-st.dataframe(incident_reports)
+st.dataframe(st.session_state['incident_reports'])
 
 # Footer
 st.write("SecureAI Threat Intelligence Dashboard")
+
