@@ -25,6 +25,21 @@ if 'incident_reports' not in st.session_state:
 def authenticate_user(username, password):
     return username == "admin" and password == "password"  # Replace with real authentication
 
+# Calculate threat level
+def calculate_threat_level(data):
+    high_severity_count = len(data[data['Severity'] == 'High'])
+    total_count = len(data)
+    if total_count == 0:
+        return 'Green', 0, total_count  # No threats detected
+
+    high_severity_proportion = high_severity_count / total_count
+    if high_severity_proportion > 0.5:
+        return 'Red', high_severity_count, total_count
+    elif high_severity_proportion > 0.2:
+        return 'Orange', high_severity_count, total_count
+    else:
+        return 'Yellow', high_severity_count, total_count
+
 # Login Page
 username = st.sidebar.text_input("Username")
 password = st.sidebar.text_input("Password", type="password")
@@ -33,6 +48,12 @@ if not authenticate_user(username, password):
     st.stop()
 
 st.title('Threat Intelligence Dashboard')
+
+# Display the real-time threat level indicator
+data = generate_sample_data()
+threat_level, high_severity_count, total_count = calculate_threat_level(data)
+st.markdown(f"## Threat Level: {threat_level}")
+st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
 # Sidebar filters
 st.sidebar.title("Filters")
