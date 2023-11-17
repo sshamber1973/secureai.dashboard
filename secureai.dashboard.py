@@ -56,6 +56,17 @@ def calculate_threat_level(data):
 def convert_df_to_csv(df):
     return df.to_csv(index=False).encode('utf-8')
 
+def generate_real_time_data():
+    new_dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='H')
+    new_categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
+    new_severity_levels = ['High', 'Medium', 'Low']
+    new_data = pd.DataFrame({
+        'Date': np.random.choice(new_dates, size=5),  # Simulate small batch of new data
+        'Category': np.random.choice(new_categories, size=5),
+        'Severity': np.random.choice(new_severity_levels, size=5)
+    })
+    return new_data
+
 # Sidebar for Login
 with st.sidebar:
     with st.expander("Login", expanded=True):
