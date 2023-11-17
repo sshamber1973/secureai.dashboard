@@ -111,19 +111,18 @@ if st.session_state.get('authenticated', False):
         st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
     with row1_col2:
-        # Placeholder for the chart
         chart_placeholder = st.empty()
+        chart_data = data.copy()
 
-    # Initialize data for the chart
-    chart_data = data.copy()
+    # Schedule periodic chart update
+    def update_chart():
+        new_data = generate_real_time_data()
+        chart_data = pd.concat([chart_data, new_data], ignore_index=True)
+        fig = px.histogram(chart_data, x='Date', y='Category', color='Severity', barmode='group')
+        chart_placeholder.plotly_chart(fig, use_container_width=True)
 
-   # Update chart periodically
-while True:
-    new_data = generate_real_time_data()
-    chart_data = pd.concat([chart_data, new_data], ignore_index=True)
-    fig = px.histogram(chart_data, x='Date', y='Category', color='Severity', barmode='group')
-    chart_placeholder.plotly_chart(fig, use_container_width=True)
-    time.sleep(1)  # Adjust sleep time as needed
+    # Trigger chart update periodically
+    st.button('Update Chart', on_click=update_chart)
 
     # Row 2: Data Table and Incident Reports
     row2_col1, row2_col2 = st.columns([2, 5])
