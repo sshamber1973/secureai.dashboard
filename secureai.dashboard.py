@@ -59,21 +59,21 @@ st.markdown(f"### Details: {high_severity_count} high severity threats out of {t
 with st.sidebar:
     # Login Section
     with st.expander("Login", expanded=True):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+        username = st.text_input("Username", key="login_username")
+        password = st.text_input("Password", type="password", key="login_password")
 
     # Filters Section
     with st.expander("Filters", expanded=True):
-        selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
-        selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+        selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
+        selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="filter_category")
 
     # Incident Reporting Section
     with st.expander("Incident Reporting", expanded=False):
         with st.form("incident_form"):
-            form_date = st.date_input("Date")
-            form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
-            form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'])
-            form_description = st.text_area("Description")
+            form_date = st.date_input("Date", key="form_date")
+            form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
+            form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
+            form_description = st.text_area("Description", key="form_description")
             submit_button = st.form_submit_button("Report Incident")
 
 # Incident Reporting Form
