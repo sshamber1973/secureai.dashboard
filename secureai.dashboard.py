@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import time
 
 # Sample data generation
 def generate_sample_data():
@@ -15,6 +16,17 @@ def generate_sample_data():
         'Severity': np.random.choice(severity_levels, size=100)
     })
     return data
+
+# Function to generate simulated real-time data
+def generate_real_time_data():
+    current_time = pd.Timestamp.now()
+    categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
+    severity_levels = ['High', 'Medium', 'Low']
+    return pd.DataFrame({
+        'Date': [current_time],
+        'Category': np.random.choice(categories),
+        'Severity': np.random.choice(severity_levels)
+    })
 
 # Authentication
 def authenticate_user(username, password):
@@ -81,8 +93,14 @@ if st.session_state.get('authenticated', False):
         st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
     with row1_col2:
-        fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
-        st.plotly_chart(fig)
+        # Placeholder for the real-time chart
+        chart_placeholder = st.empty()
+        while True:
+            new_data = generate_real_time_data()
+            data = pd.concat([data, new_data], ignore_index=True)
+            fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
+            chart_placeholder.plotly_chart(fig, use_container_width=True)
+            time.sleep(1)  # Adjust the sleep time as needed
 
     # Row 2: Data Table and Incident Reports
     row2_col1, row2_col2 = st.columns([2, 5])
@@ -105,6 +123,8 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
+
 
 
 
