@@ -40,6 +40,10 @@ def calculate_threat_level(data):
     else:
         return 'Yellow', high_severity_count, total_count
 
+# Function to convert DataFrame to CSV for download
+def convert_df_to_csv(df):
+    return df.to_csv(index=False).encode('utf-8')
+
 # Sidebar with login
 with st.sidebar:
     # Login Section
@@ -114,6 +118,7 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
 
 
 
