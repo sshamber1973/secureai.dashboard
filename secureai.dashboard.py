@@ -117,8 +117,8 @@ if st.session_state.get('authenticated', False):
     # Initialize data for the chart
     chart_data = data.copy()
 
-    # Update the chart periodically
-    for _ in range(10):  # Adjust this loop as needed
+   # Update the chart periodically
+    while True:  # Replace 'for _ in range(10):' with 'while True:' for continuous update
         new_data = generate_real_time_data()
         chart_data = pd.concat([chart_data, new_data], ignore_index=True)
         fig = px.histogram(chart_data, x='Date', y='Category', color='Severity', barmode='group')
