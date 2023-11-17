@@ -17,13 +17,13 @@ def generate_sample_data():
     })
     return data
 
-# In-memory storage for incident reports
-if 'incident_reports' not in st.session_state:
-    st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
-
 # Authentication (placeholder, implement real authentication for production)
 def authenticate_user(username, password):
     return username == "admin" and password == "password"  # Replace with real authentication
+
+# In-memory storage for incident reports
+if 'incident_reports' not in st.session_state:
+    st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
 
 # Calculate threat level
 def calculate_threat_level(data):
@@ -40,28 +40,19 @@ def calculate_threat_level(data):
     else:
         return 'Yellow', high_severity_count, total_count
 
-# Login Page
-username = st.sidebar.text_input("Username")
-password = st.sidebar.text_input("Password", type="password")
-if not authenticate_user(username, password):
-    st.error("Please enter valid credentials")
-    st.stop()
-
-st.title('Threat Intelligence Dashboard')
-
-# Display the real-time threat level indicator
-data = generate_sample_data()
-threat_level, high_severity_count, total_count = calculate_threat_level(data)
-st.markdown(f"## Threat Level: {threat_level}")
-st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
-
-# Sidebar Layout
+# Sidebar Layout for Login and Filters
 with st.sidebar:
+    st.title("Control Panel")
+    
     # Login Section
     with st.expander("Login", expanded=True):
         username = st.text_input("Username", key="login_username")
         password = st.text_input("Password", type="password", key="login_password")
-
+        if st.button("Login"):
+            if not authenticate_user(username, password):
+                st.error("Please enter valid credentials")
+                st.stop()
+    
     # Filters Section
     with st.expander("Filters", expanded=True):
         selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
@@ -76,20 +67,14 @@ with st.sidebar:
             form_description = st.text_area("Description", key="form_description")
             submit_button = st.form_submit_button("Report Incident")
 
-# Incident Reporting Form
-st.sidebar.title("Incident Reporting")
-with st.sidebar.form("incident_form"):
-    form_date = st.date_input("Date")
-    form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
-    form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'])
-    form_description = st.text_area("Description")
-    submit_button = st.form_submit_button("Report Incident")
+# Main Content
+st.title('Threat Intelligence Dashboard')
 
-    # Add new incident to the DataFrame
-    if submit_button:
-        new_incident = pd.DataFrame([[form_date, form_category, form_severity, form_description]],
-                                    columns=['Date', 'Category', 'Severity', 'Description'])
-        st.session_state['incident_reports'] = pd.concat([st.session_state['incident_reports'], new_incident], ignore_index=True)
+# Display the real-time threat level indicator
+data = generate_sample_data()
+threat_level, high_severity_count, total_count = calculate_threat_level(data)
+st.markdown(f"## Threat Level: {threat_level}")
+st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
 # Load and filter data
 data = generate_sample_data()
@@ -126,4 +111,5 @@ st.dataframe(st.session_state['incident_reports'])
 
 # Footer
 st.write("SecureAI Threat Intelligence Dashboard")
+
 
