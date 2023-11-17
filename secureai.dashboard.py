@@ -5,6 +5,10 @@ import plotly.express as px
 import numpy as np
 import time
 
+# Initialize in-memory storage for incident reports in session state
+if 'incident_reports' not in st.session_state:
+    st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
+
 # Sample data generation
 def generate_sample_data():
     dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='H')
