@@ -69,7 +69,7 @@ with st.sidebar:
 
     # Incident Reporting Section
     with st.expander("Incident Reporting", expanded=False):
-        with st.form("incident_form"):
+        with st.form(key="incident_reporting_form"):
             form_date = st.date_input("Date", key="form_date")
             form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
             form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
