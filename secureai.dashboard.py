@@ -17,17 +17,6 @@ def generate_sample_data():
     })
     return data
 
-# Function to generate simulated real-time data
-def generate_real_time_data():
-    current_time = pd.Timestamp.now()
-    categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
-    severity_levels = ['High', 'Medium', 'Low']
-    return pd.DataFrame({
-        'Date': [current_time],
-        'Category': np.random.choice(categories),
-        'Severity': np.random.choice(severity_levels)
-    })
-
 # Authentication
 def authenticate_user(username, password):
     return username == "admin" and password == "password"  # Placeholder
@@ -129,6 +118,7 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
 
 
 
