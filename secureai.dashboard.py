@@ -58,17 +58,17 @@ st.markdown(f"### Details: {high_severity_count} high severity threats out of {t
 # Sidebar Layout
 with st.sidebar:
     # Login Section
-    with st.beta_expander("Login", expanded=True):
+    with st.expander("Login", expanded=True):
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
 
     # Filters Section
-    with st.beta_expander("Filters", expanded=True):
+    with st.expander("Filters", expanded=True):
         selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
         selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
 
     # Incident Reporting Section
-    with st.beta_expander("Incident Reporting", expanded=False):
+    with st.expander("Incident Reporting", expanded=False):
         with st.form("incident_form"):
             form_date = st.date_input("Date")
             form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
