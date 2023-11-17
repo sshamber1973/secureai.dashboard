@@ -55,10 +55,26 @@ threat_level, high_severity_count, total_count = calculate_threat_level(data)
 st.markdown(f"## Threat Level: {threat_level}")
 st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
-# Sidebar filters
-st.sidebar.title("Filters")
-selected_severity = st.sidebar.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
-selected_category = st.sidebar.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+# Sidebar Layout
+with st.sidebar:
+    # Login Section
+    with st.beta_expander("Login", expanded=True):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+    # Filters Section
+    with st.beta_expander("Filters", expanded=True):
+        selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'])
+        selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+
+    # Incident Reporting Section
+    with st.beta_expander("Incident Reporting", expanded=False):
+        with st.form("incident_form"):
+            form_date = st.date_input("Date")
+            form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'])
+            form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'])
+            form_description = st.text_area("Description")
+            submit_button = st.form_submit_button("Report Incident")
 
 # Incident Reporting Form
 st.sidebar.title("Incident Reporting")
