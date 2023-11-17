@@ -59,9 +59,9 @@ with st.sidebar:
 if st.session_state.get('authenticated', False):
     st.title('Threat Intelligence Dashboard')
 
-    # Main dashboard layout with left-aligned arrangement
+    # Adjusted Main dashboard layout with left-aligned arrangement
     # Row 1: Threat Level and Real-time Monitoring Chart
-    row1_col1, row1_col2, row1_col3 = st.columns([2, 3, 1])
+    row1_col1, row1_col2 = st.columns([1, 3])  # Adjusted column widths
     with row1_col1:
         # Threat Level Display
         data = generate_sample_data()
@@ -75,7 +75,7 @@ if st.session_state.get('authenticated', False):
         st.plotly_chart(fig)
 
     # Row 2: Data Table and Incident Reports
-    row2_col1, row2_col2, row2_col3 = st.columns([2, 2, 1])
+    row2_col1, row2_col2 = st.columns([1, 3])  # Adjusted column widths
     with row2_col1:
         st.write("Real-time Threat Monitoring")
         st.dataframe(data)
@@ -85,7 +85,7 @@ if st.session_state.get('authenticated', False):
         st.dataframe(st.session_state['incident_reports'])
 
     # Row 3: Download Data Button
-    row3_col1, row3_col2 = st.columns([1, 4])
+    row3_col1, row3_col2 = st.columns([1, 3])  # Adjusted column widths
     with row3_col1:
         st.download_button(
             label="Download data as CSV",
