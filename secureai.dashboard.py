@@ -25,100 +25,68 @@ def authenticate_user(username, password):
 if 'incident_reports' not in st.session_state:
     st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
 
-# Calculate threat level
-def calculate_threat_level(data):
-    high_severity_count = len(data[data['Severity'] == 'High'])
-    total_count = len(data)
-    if total_count == 0:
-        return 'Green', 0, total_count  # No threats detected
-
-    high_severity_proportion = high_severity_count / total_count
-    if high_severity_proportion > 0.5:
-        return 'Red', high_severity_count, total_count
-    elif high_severity_proportion > 0.2:
-        return 'Orange', high_severity_count, total_count
-    else:
-        return 'Yellow', high_severity_count, total_count
-
-# Authentication Check
-if 'authenticated' not in st.session_state:
-    st.session_state['authenticated'] = False
-
-# Sidebar Layout for Login and Filters
+# Sidebar with filters, incident reporting form, and login
 with st.sidebar:
-    st.title("Control Panel")
-    
     # Login Section
-    if not st.session_state['authenticated']:
-        with st.expander("Login", expanded=True):
-            username = st.text_input("Username", key="login_username")
-            password = st.text_input("Password", type="password", key="login_password")
-            if st.button("Login"):
-                if authenticate_user(username, password):
-                    st.session_state['authenticated'] = True
-                else:
-                    st.error("Invalid credentials")
-    
-    if st.session_state['authenticated']:
-        # Filters Section
-        with st.expander("Filters", expanded=True):
-            selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
-            selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="filter_category")
+    with st.expander("Login", expanded=True):
+        username = st.text_input("Username", key="login_username")
+        password = st.text_input("Password", type="password", key="login_password")
+        if authenticate_user(username, password):
+            st.success("Logged in successfully!")
+        else:
+            st.error("Please enter valid credentials")
 
-        # Incident Reporting Section
-        with st.expander("Incident Reporting", expanded=False):
-            with st.form(key="incident_reporting_form"):
-                form_date = st.date_input("Date", key="form_date")
-                form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
-                form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
-                form_description = st.text_area("Description", key="form_description")
-                submit_button = st.form_submit_button("Report Incident")
+    # Filters Section
+    with st.expander("Filters", expanded=True):
+        selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
+        selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="filter_category")
 
-# Main Content
-if st.session_state['authenticated']:
-    st.title('Threat Intelligence Dashboard')
+    # Incident Reporting Section
+    with st.expander("Incident Reporting", expanded=False):
+        with st.form(key="incident_reporting_form"):
+            form_date = st.date_input("Date", key="form_date")
+            form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
+            form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
+            form_description = st.text_area("Description", key="form_description")
+            submit_button = st.form_submit_button("Report Incident")
 
-    # Display the real-time threat level indicator
+# Main dashboard layout
+st.title('Threat Intelligence Dashboard')
+
+# Top Section: Threat Level Indicator and Real-time Monitoring Chart
+col1, col2 = st.columns(2)
+with col1:
+    # Threat Level Display
     data = generate_sample_data()
     threat_level, high_severity_count, total_count = calculate_threat_level(data)
     st.markdown(f"## Threat Level: {threat_level}")
     st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
-    # Load and filter data
-    data = generate_sample_data()
-    if selected_severity:
-        data = data[data['Severity'].isin(selected_severity)]
-    if selected_category:
-        data = data[data['Category'].isin(selected_category)]
-
-    # Display data
-    st.write("Real-time Threat Monitoring")
-    st.dataframe(data)
-
-    # Interactive Chart
-    st.write("Threat Analysis")
+with col2:
+    # Real-time Monitoring Chart
     fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
     st.plotly_chart(fig)
 
-    # Download data (sample implementation)
-    @st.cache_data
-    def convert_df_to_csv(df):
-        return df.to_csv(index=False).encode('utf-8')
+# Middle Section: Data Table and Incident Reports
+col3, col4 = st.columns(2)
+with col3:
+    st.write("Real-time Threat Monitoring")
+    st.dataframe(data)
 
-    csv = convert_df_to_csv(data)
-    st.download_button(
-        label="Download data as CSV",
-        data=csv,
-        file_name='threat_data.csv',
-        mime='text/csv',
-    )
-
-    # Display Incident Reports
+with col4:
     st.write("Incident Reports")
     st.dataframe(st.session_state['incident_reports'])
 
-    # Footer
-    st.write("SecureAI Threat Intelligence Dashboard")
+# Bottom Section: Download Data
+st.download_button(
+    label="Download data as CSV",
+    data=convert_df_to_csv(data),
+    file_name='threat_data.csv',
+    mime='text/csv',
+)
+
+# Footer
+st.write("SecureAI Threat Intelligence Dashboard")
 
 
 
