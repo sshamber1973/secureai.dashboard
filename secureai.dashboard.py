@@ -51,7 +51,7 @@ def calculate_threat_level(data):
 def convert_df_to_csv(df):
     return df.to_csv(index=False).encode('utf-8')
 
-# Sidebar for Login and Forms
+# Sidebar for Login
 with st.sidebar:
     with st.expander("Login", expanded=True):
         username = st.text_input("Username", key="login_username")
@@ -62,26 +62,29 @@ with st.sidebar:
         else:
             st.session_state['authenticated'] = False
 
-    with st.expander("Filters", expanded=True):
-        selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
-        selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="filter_category")
-
-    with st.expander("Incident Reporting", expanded=False):
-        with st.form(key="incident_reporting_form"):
-            form_date = st.date_input("Date", key="form_date")
-            form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
-            form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
-            form_description = st.text_area("Description", key="form_description")
-            submit_button = st.form_submit_button("Report Incident")
-
-            # Add new incident to the DataFrame
-            if submit_button:
-                new_incident = pd.DataFrame([[form_date, form_category, form_severity, form_description]],
-                                            columns=['Date', 'Category', 'Severity', 'Description'])
-                st.session_state['incident_reports'] = pd.concat([st.session_state['incident_reports'], new_incident], ignore_index=True)
-
 # Check if user is authenticated
 if st.session_state.get('authenticated', False):
+    # Additional Sidebar Content after Authentication
+    with st.sidebar:
+        with st.expander("Filters", expanded=True):
+            selected_severity = st.multiselect('Select Severity Level', ['High', 'Medium', 'Low'], key="filter_severity")
+            selected_category = st.multiselect('Select Threat Category', ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="filter_category")
+
+        with st.expander("Incident Reporting", expanded=False):
+            with st.form(key="incident_reporting_form"):
+                form_date = st.date_input("Date", key="form_date")
+                form_category = st.selectbox("Category", ['Malware', 'Phishing', 'DDoS', 'Insider Threat'], key="form_category")
+                form_severity = st.selectbox("Severity", ['High', 'Medium', 'Low'], key="form_severity")
+                form_description = st.text_area("Description", key="form_description")
+                submit_button = st.form_submit_button("Report Incident")
+
+                # Add new incident to the DataFrame
+                if submit_button:
+                    new_incident = pd.DataFrame([[form_date, form_category, form_severity, form_description]],
+                                                columns=['Date', 'Category', 'Severity', 'Description'])
+                    st.session_state['incident_reports'] = pd.concat([st.session_state['incident_reports'], new_incident], ignore_index=True)
+
+    # Dashboard Layout
     st.title('Threat Intelligence Dashboard')
 
     # Row 1: Threat Level and Real-time Monitoring Chart
@@ -93,8 +96,11 @@ if st.session_state.get('authenticated', False):
         st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
     with row1_col2:
-        # Placeholder for the real-time chart
+        # Placeholder for the chart
         chart_placeholder = st.empty()
+
+    # Simulating real-time data update
+    with st.empty():
         while True:
             new_data = generate_real_time_data()
             data = pd.concat([data, new_data], ignore_index=True)
@@ -123,6 +129,7 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
 
 
 
