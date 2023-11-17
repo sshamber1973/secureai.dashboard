@@ -101,7 +101,7 @@ if st.session_state.get('authenticated', False):
 
     # Simulating real-time data update
     with st.empty():
-        while True:
+        for _ in range(10):  # Example loop, replace with your logic
             new_data = generate_real_time_data()
             data = pd.concat([data, new_data], ignore_index=True)
             fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
@@ -129,6 +129,7 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
 
 
 
