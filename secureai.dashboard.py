@@ -93,7 +93,7 @@ if st.session_state.get('authenticated', False):
     st.title('Threat Intelligence Dashboard')
 
     # Row 1: Threat Level and Real-time Monitoring Chart
-    row1_col1, row1_col2 = st.columns([2, 5])
+    row1_col1, spacer, row1_col2 = st.columns([2, 2.0, 5]) # Adjust the middle value to increase or decrease space
     with row1_col1:
         data = generate_sample_data()
         threat_level, high_severity_count, total_count = calculate_threat_level(data)
