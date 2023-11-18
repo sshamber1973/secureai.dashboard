@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -56,17 +57,6 @@ def calculate_threat_level(data):
 def convert_df_to_csv(df):
     return df.to_csv(index=False).encode('utf-8')
 
-def generate_real_time_data():
-    new_dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='H')
-    new_categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
-    new_severity_levels = ['High', 'Medium', 'Low']
-    new_data = pd.DataFrame({
-        'Date': np.random.choice(new_dates, size=5),  # Simulate small batch of new data
-        'Category': np.random.choice(new_categories, size=5),
-        'Severity': np.random.choice(new_severity_levels, size=5)
-    })
-    return new_data
-
 # Sidebar for Login
 with st.sidebar:
     with st.expander("Login", expanded=True):
@@ -111,18 +101,17 @@ if st.session_state.get('authenticated', False):
         st.markdown(f"### Details: {high_severity_count} high severity threats out of {total_count} total threats.")
 
     with row1_col2:
+        # Placeholder for the chart
         chart_placeholder = st.empty()
-        chart_data = data.copy()
 
-    # Schedule periodic chart update
-    def update_chart():
-        new_data = generate_real_time_data()
-        chart_data = pd.concat([chart_data, new_data], ignore_index=True)
-        fig = px.histogram(chart_data, x='Date', y='Category', color='Severity', barmode='group')
-        chart_placeholder.plotly_chart(fig, use_container_width=True)
-
-    # Trigger chart update periodically
-    st.button('Update Chart', on_click=update_chart)
+    # Simulating real-time data update
+    with st.empty():
+        for _ in range(10):  # Example loop, replace with your logic
+            new_data = generate_real_time_data()
+            data = pd.concat([data, new_data], ignore_index=True)
+            fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
+            chart_placeholder.plotly_chart(fig, use_container_width=True)
+            time.sleep(1)  # Adjust the sleep time as needed
 
     # Row 2: Data Table and Incident Reports
     row2_col1, row2_col2 = st.columns([2, 5])
@@ -145,6 +134,7 @@ if st.session_state.get('authenticated', False):
     st.write("SecureAI Threat Intelligence Dashboard")
 else:
     st.info("Please log in to access the dashboard.")
+
 
 
 
