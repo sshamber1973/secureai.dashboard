@@ -22,6 +22,15 @@ def generate_sample_data():
     })
     return data
 
+# Function to convert DataFrame to CSV
+def convert_to_csv(dataframe):
+    try:
+        filename = 'incident_reports.csv'
+        dataframe.to_csv(filename, index=False)
+        st.success(f"Data successfully exported to {filename}")
+    except Exception as e:
+        st.error(f"Error exporting data to CSV: {e}")
+
 # Function to generate real-time data (smaller batches)
 def generate_real_time_data():
     current_time = pd.Timestamp.now()
