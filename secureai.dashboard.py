@@ -12,7 +12,7 @@ if 'incident_reports' not in st.session_state:
 
 # Sample data generation
 def generate_sample_data():
-    dates = pd.date_range(start='2023-01-01', end='2023-01-31', freq='H')
+    dates = pd.date_range(start='2023-11-01', end='2023-12-31', freq='H')
     categories = ['Malware', 'Phishing', 'DDoS', 'Insider Threat']
     severity_levels = ['High', 'Medium', 'Low']
     data = pd.DataFrame({
@@ -119,6 +119,18 @@ if st.session_state.get('authenticated', False):
             new_data = generate_real_time_data()
             data = pd.concat([data, new_data], ignore_index=True)
             fig = px.histogram(data, x='Date', y='Category', color='Severity', barmode='group')
+
+            # Custom styling for the chart
+            fig.update_layout(
+                plot_bgcolor='white',
+                paper_bgcolor='lightgray',
+                font_color='black',
+                title_font_color='blue',
+                font_size=12,
+                title_font_size=14
+            )
+
+
             chart_placeholder.plotly_chart(fig, use_container_width=True)
             time.sleep(1)  # Adjust the sleep time as needed
 
