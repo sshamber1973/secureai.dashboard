@@ -6,6 +6,9 @@ import plotly.express as px
 import numpy as np
 import time
 
+# Set the page config at the very beginning of the script
+st.set_page_config(page_title="Threat Intelligence Dashboard", layout="wide")
+
 # Initialize in-memory storage for incident reports in session state
 if 'incident_reports' not in st.session_state:
     st.session_state['incident_reports'] = pd.DataFrame(columns=['Date', 'Category', 'Severity', 'Description'])
@@ -129,7 +132,6 @@ if st.session_state.get('authenticated', False):
                 font_size=12,
                 title_font_size=14
             )
-
 
             chart_placeholder.plotly_chart(fig, use_container_width=True)
             time.sleep(1)  # Adjust the sleep time as needed
